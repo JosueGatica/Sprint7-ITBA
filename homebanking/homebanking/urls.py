@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from itbank.views import solicitud_prestamo
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+     path('solicitud_prestamo/', solicitud_prestamo, name='solicitud_prestamo'),
 ]
