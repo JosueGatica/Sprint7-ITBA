@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+
+{% block content%}
 <form action="/crearCliente/" method="POST">
     {% csrf_token %}
     {{form.as_p}}
@@ -6,3 +9,4 @@
         Signup
     </button>
 </form>
+{% endblock %}

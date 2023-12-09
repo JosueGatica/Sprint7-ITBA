@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content%}
+<h1>Sigin</h1>
+
+{{error}}
+
+<form method="post" action="{% url 'signin' %}">
+    {% csrf_token %}
+    {{ form.customer_name.label_tag }} {{ form.customer_name }}
+    {{ form.customer_surname.label_tag }} {{ form.customer_surname }}
+    {{ form.dni.label_tag }} {{ form.dni }}
+    {{ form.password.label_tag }} {{ form.password }}
+    <button type="submit">Iniciar Sesión</button>
+</form>
+
+
+{% endblock %}

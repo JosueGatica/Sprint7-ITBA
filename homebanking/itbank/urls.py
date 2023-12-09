@@ -9,4 +9,7 @@ urlpatterns = [
     path('crearCliente/', views.crearCliente, name="crearCliente"),
     path('crearCuentaBancaria/', views.crearCuentaBancaria, name="crearCuentaBancaria"),
     path('listarCuentasClientes/<int:customer_id>', views.listarCuentasClientes, name="listarCuentasClientes"),
+    path('',views.home, name='home'),
+    path('logout/',views.signout,name='logout'),
+    path('signin/',views.signin,name='signin')
 ]
