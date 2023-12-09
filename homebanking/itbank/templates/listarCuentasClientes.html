@@ -1,0 +1,7 @@
+<h1>Cuentas del Cliente: {{ cliente.customer_name }} {{ cliente.customer_surname }}</h1>
+
+<ul>
+  {% for cuenta in cuentas %}
+    <li>Account ID: {{ cuenta.account_id }} - Balance: {{ cuenta.balance }} - IBAN: {{ cuenta.iban }} - Tipo de Cuenta: {{ cuenta.tipocuenta }}</li>
+  {% endfor %}
+</ul>
