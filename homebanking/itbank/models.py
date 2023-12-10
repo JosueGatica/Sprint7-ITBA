@@ -1,80 +1,22 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-class MarcaTarjeta(models.Model):
-    marcatarjeta = models.TextField(db_column='marcaTarjeta')  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'MarcaTarjeta'
-
-
-class Tarjeta(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    numero = models.TextField(db_column='Numero', unique=True, blank=True, null=True)  # Field name made lowercase.
-    cvv = models.IntegerField(db_column='CVV', blank=True, null=True)  # Field name made lowercase.
-    fechaotorgamiento = models.DateField(db_column='FechaOtorgamiento', blank=True, null=True)  # Field name made lowercase.
-    fechaexpiracion = models.DateField(db_column='FechaExpiracion', blank=True, null=True)  # Field name made lowercase.
-    tipotarjeta = models.TextField(db_column='TipoTarjeta', blank=True, null=True)  # Field name made lowercase.
-    marcatarjeta = models.ForeignKey(MarcaTarjeta, models.DO_NOTHING, db_column='marcaTarjeta', blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'Tarjeta'
-
-
-class TipoCliente(models.Model):
-    tipo = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'TipoCliente'
-
-
-class TipoCuenta(models.Model):
-    tipocuenta = models.TextField(db_column='tipoCuenta')  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'TipoCuenta'
-
-
-class AuditoriaCuenta(models.Model):
-    old_id = models.IntegerField()
-    new_id = models.AutoField(primary_key=True)
-    old_balance = models.IntegerField()
-    new_balance = models.IntegerField()
-    old_iban = models.TextField()
-    new_iban = models.TextField()
-    old_type = models.IntegerField()
-    new_type = models.IntegerField()
-    user_action = models.TextField()
-    created_at = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'auditoria_cuenta'
-
-
+# Create your models here.
 class Cliente(models.Model):
     customer_id = models.AutoField(primary_key=True)
     customer_name = models.TextField()
     customer_surname = models.TextField()  # This field type is a guess.
-    customer_dni = models.BinaryField(db_column='customer_DNI')  # Field name made lowercase.
+    customer_dni = models.TextField(db_column='customer_DNI')  # Field name made lowercase.
     dob = models.TextField(blank=True, null=True)
     branch_id = models.IntegerField()
-    tipocliente = models.ForeignKey(TipoCliente, models.DO_NOTHING, db_column='tipoCliente', blank=True, null=True)  # Field name made lowercase.
-    tarjeta = models.ForeignKey(Tarjeta, models.DO_NOTHING, blank=True, null=True)
+    tipocliente = models.ForeignKey('Tipocliente', models.DO_NOTHING, db_column='tipoCliente', blank=True, null=True)  # Field name made lowercase.
+    tarjeta = models.ForeignKey('Tarjeta', models.DO_NOTHING, db_column='tarjeta', to_field='numero', blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'cliente'
+
+    def __str__(self) -> str:
+        return self.customer_name + ' ' + self.customer_surname
 
 
 class Cuenta(models.Model):
@@ -82,68 +24,70 @@ class Cuenta(models.Model):
     customer_id = models.IntegerField()
     balance = models.IntegerField()
     iban = models.TextField()
-    tipocuenta = models.IntegerField(db_column='tipoCuenta', blank=True, null=True)  # Field name made lowercase.
+    tipocuenta = models.ForeignKey('Tipocuenta', models.DO_NOTHING, db_column='tipoCuenta', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'cuenta'
 
 
+class Direcciones(models.Model):
+    direccion = models.TextField()
+    ciudad = models.TextField(blank=True, null=True)
+    estado = models.TextField(blank=True, null=True)
+    codigo_postal = models.TextField(blank=True, null=True)
+    cliente_direccion = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='cliente_direccion', blank=True, null=True)
+    empleado_direccion = models.ForeignKey('Empleado', models.DO_NOTHING, db_column='empleado_direccion', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'direcciones'
+    
+    def __str__(self) -> str:
+        return self.direccion
+
 class Empleado(models.Model):
     employee_id = models.AutoField(primary_key=True)
     employee_name = models.TextField()
     employee_surname = models.TextField()
-    employee_hire_date = models.TextField()
+    employee_hire_date = models.DateField(blank=True, null=True)
     employee_dni = models.TextField(db_column='employee_DNI')  # Field name made lowercase.
     branch_id = models.IntegerField()
+    direccion_empleado = models.ForeignKey(Direcciones, models.DO_NOTHING, db_column='direccion_empleado', blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'empleado'
 
+    def __str__(self) -> str:
+        return self.employee_name + ' ' + self.employee_surname
 
-class Movimientos(models.Model):
-    numero_cuenta = models.IntegerField()
-    monto = models.IntegerField()
-    tipo_operacion = models.TextField()
-    hora = models.TextField()
+
+class Marcatarjeta(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    marca = models.TextField()
 
     class Meta:
         managed = False
-        db_table = 'movimientos'
+        db_table = 'marcaTarjeta'
 
+    def __str__(self) -> str:
+        return self.marca
 
-from django.db import models
-from django.contrib.auth.models import User
 
 class Prestamo(models.Model):
-    TIPO_CHOICES = [
-        ('BLACK', 'Black'),
-        ('GOLD', 'Gold'),
-        ('CLASSIC', 'Classic'),
-    ]
-
     loan_id = models.AutoField(primary_key=True)
-    loan_type = models.CharField(max_length=10, choices=TIPO_CHOICES)
-    loan_date = models.DateField()
-    loan_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    customer_id = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def save(self, *args, **kwargs):
-        # Calcula el monto preaprobado según el tipo de cliente
-        if self.loan_type == 'BLACK':
-            self.loan_total = 500000
-        elif self.loan_type == 'GOLD':
-            self.loan_total = 300000
-        elif self.loan_type == 'CLASSIC':
-            self.loan_total = 100000
-
-        super().save(*args, **kwargs)
+    loan_type = models.TextField()
+    loan_date = models.TextField()
+    loan_total = models.IntegerField()
+    customer_id = models.IntegerField()
 
     class Meta:
         managed = False
         db_table = 'prestamo'
 
+    def __str__(self) -> str:
+        return self.loan_id
 
 
 class Sucursal(models.Model):
@@ -151,7 +95,50 @@ class Sucursal(models.Model):
     branch_number = models.BinaryField()
     branch_name = models.TextField()
     branch_address_id = models.IntegerField()
+    direccion_sucursal = models.ForeignKey(Direcciones, models.DO_NOTHING, db_column='direccion_sucursal', blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'sucursal'
+
+    def __str__(self) -> str:
+        return self.branch_name
+
+
+class Tarjeta(models.Model):
+    numero = models.TextField(db_column='Numero', unique=True, blank=True, null=True)  # Field name made lowercase.
+    cvv = models.IntegerField(db_column='CVV', blank=True, null=True)  # Field name made lowercase.
+    fechaotorgamiento = models.DateField(db_column='FechaOtorgamiento', blank=True, null=True)  # Field name made lowercase.
+    fechaexpiracion = models.DateField(db_column='FechaExpiracion', blank=True, null=True)  # Field name made lowercase.
+    tipotarjeta = models.TextField(db_column='TipoTarjeta', blank=True, null=True)  # Field name made lowercase.
+    marcatarjeta = models.ForeignKey(Marcatarjeta, models.DO_NOTHING, db_column='marcaTarjeta', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'tarjeta'
+    
+    
+
+
+class Tipocliente(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    tipo = models.TextField(db_column='Tipo')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'tipoCliente'
+
+    def __str__(self) -> str:
+        return self.tipo
+
+
+class Tipocuenta(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    tipo = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'tipoCuenta'
+
+    def __str__(self) -> str:
+        return self.tipo
